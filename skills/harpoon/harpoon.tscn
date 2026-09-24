@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cqkpu71ro78by"]
+
+[ext_resource type="PackedScene" uid="uid://lp22aji4cnr2" path="res://skills/harpoon/mesh/grappling_claw.glb" id="1_mesh"]
+
+[node name="Harpoon" type="Node3D" unique_id=2129430743]
+
+[node name="grappling_claw" parent="." unique_id=792566372 instance=ExtResource("1_mesh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0064156055, -0.0059567094, 0.192631)
+
+[node name="GrappleClaw_Root" parent="grappling_claw" index="0" unique_id=1627306907]
+transform = Transform3D(0.9999514, 0.009855518, 0, -0.009855518, 0.9999514, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="GC_Hinge_01" parent="grappling_claw/GrappleClaw_Root/GC_Orbit_01" parent_id_path=PackedInt32Array(792566372, 1938742902) index="0" unique_id=1503641541]
+transform = Transform3D(0.6495612, -1.2485517e-10, -0.7603093, 1.2485517e-10, 1, -5.7547755e-11, 0.7603093, -5.7547755e-11, 0.6495612, 0.34, 0, -0.2)
+
+[node name="GC_Hinge_02" parent="grappling_claw/GrappleClaw_Root/GC_Orbit_02" parent_id_path=PackedInt32Array(792566372, 1730564525) index="0" unique_id=2101125206]
+transform = Transform3D(0.64747155, -8.468124e-09, -0.7620896, 6.894292e-08, 1, 4.7462205e-08, 0.7620896, -8.3271104e-08, 0.64747155, 0.34, 0, -0.2)
+
+[node name="GC_Hinge_03" parent="grappling_claw/GrappleClaw_Root/GC_Orbit_03" parent_id_path=PackedInt32Array(792566372, 1069894452) index="0" unique_id=891814012]
+transform = Transform3D(0.6330751, -1.942476e-08, -0.77409035, -4.922709e-08, 1, -6.5353106e-08, 0.77409035, 7.947964e-08, 0.6330751, 0.34000003, 0, -0.2)
+
+[editable path="grappling_claw"]
