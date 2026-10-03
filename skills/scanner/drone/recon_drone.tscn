@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+; ДРОН-РОЗВІДНИК LRR5 (пак ReconnaissanceDroneLRR5). Розмір моделі підганяє
+; recon_drone.gd (_fit), віяло променя Beam він же ставить щокадру у світових
+; координатах.
+
+[ext_resource type="Script" path="res://skills/scanner/drone/recon_drone.gd" id="1_drone"]
+[ext_resource type="ArrayMesh" path="res://skills/scanner/drone/mesh/ReconnaissanceDroneLRR5.obj" id="2_mesh"]
+[ext_resource type="Material" path="res://skills/scanner/drone/drone_material.tres" id="3_mat"]
+[ext_resource type="Shader" path="res://skills/scanner/drone/scan_beam.gdshader" id="4_beam"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 0.0
+bottom_radius = 1.0
+height = 1.0
+radial_segments = 32
+rings = 1
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fan"]
+render_priority = 0
+shader = ExtResource("4_beam")
+
+[node name="ReconDrone" type="Node3D"]
+script = ExtResource("1_drone")
+
+[node name="Model" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_mesh")
+material_override = ExtResource("3_mat")
+
+[node name="Beam" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_fan")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_fan")
+
+[node name="Eye" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, -0.6)
+light_color = Color(0.35, 0.8, 1, 1)
+light_energy = 0.0
+omni_range = 5.0

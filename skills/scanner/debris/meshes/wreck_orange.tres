@@ -1,0 +1,39 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3]
+
+; ШКУРА УЛАМКА GXS, варіант «orange». Пак приніс чотири готові карти кольору
+; (blue/green/grey/orange) на один спільний атлас, тож усі чотири матеріали
+; діляться нормаллю, металом, шорсткістю та затіненням і різняться рівно
+; альбедо. Дев'ята карта пака, GXS_mask, НЕ підключена свідомо: це маска
+; фарбування, вона позначає рівно ті 4% атласа, де кольорові варіанти між
+; собою різняться, і при готових запечених альбедо не потрібна.
+;
+; Карти світіння в паку немає, і це не загублений слот: уламок мертвий,
+; світитися нічому.
+
+[ext_resource type="Texture2D" path="res://skills/scanner/debris/meshes/textures/GXS_orange.png" id="1_alb"]
+[ext_resource type="Texture2D" path="res://skills/scanner/debris/meshes/textures/GXS_normal.png" id="2_nrm"]
+[ext_resource type="Texture2D" path="res://skills/scanner/debris/meshes/textures/GXS_metallic.png" id="3_met"]
+[ext_resource type="Texture2D" path="res://skills/scanner/debris/meshes/textures/GXS_roughness.png" id="4_rgh"]
+[ext_resource type="Texture2D" path="res://skills/scanner/debris/meshes/textures/GXS_AO.png" id="5_ao"]
+
+[resource]
+resource_name = "GXS_Wreck_orange"
+albedo_texture = ExtResource("1_alb")
+; Метал у карті реальний, не рівний: медіана 12/255, верхня чверть від 90, пік
+; 246 — тобто панелі блищать, а обшивка ні. Множник одиниця, вся робота в карті.
+metallic = 1.0
+metallic_texture = ExtResource("3_met")
+; Множник шорсткості лишається одиницею БЕЗ підлоги. Підлога знадобилася б,
+; якби карта підходила до нуля (дзеркальна пляма, випадок терраформера), але
+; тут перший процентиль по атласу 122/255: найглянцевіша ділянка уламка вдвічі
+; матовіша за небезпечний поріг.
+roughness_texture = ExtResource("4_rgh")
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource("2_nrm")
+; AO підключено за перевіреним порогом: кореляція яскравості карти з альбедо
+; 0.453 по зайнятій частині атласа. Це нижче за контейнеровоз (0.623) і вдвічі
+; нижче за обсерваторію (0.914), де затінення виявилося вже запеченим у diffuse
+; і карту лишили від'єднаною. Тут затінення своє, подвоєння не буде.
+ao_enabled = true
+ao_texture = ExtResource("5_ao")

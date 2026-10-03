@@ -1,0 +1,29 @@
+[gd_resource type="StandardMaterial3D" load_steps=7 format=3]
+
+; ШКУРА ДРОНА LRR5, сірий варіант паку. Карти зменшено з 4096 до 2048
+; (альбедо, нормаль) і 1024 (решта): дрон на екрані завбільшки з палець, і
+; 4096 тут було б 300 МБ відеопам'яті ні за що. Світіння — карта
+; Illumination паку: вогні й сопла.
+
+[ext_resource type="Texture2D" path="res://skills/scanner/drone/mesh/LRR5_albedo.png" id="1_alb"]
+[ext_resource type="Texture2D" path="res://skills/scanner/drone/mesh/LRR5_normal.png" id="2_nrm"]
+[ext_resource type="Texture2D" path="res://skills/scanner/drone/mesh/LRR5_metallic.png" id="3_met"]
+[ext_resource type="Texture2D" path="res://skills/scanner/drone/mesh/LRR5_roughness.png" id="4_rgh"]
+[ext_resource type="Texture2D" path="res://skills/scanner/drone/mesh/LRR5_ao.png" id="5_ao"]
+[ext_resource type="Texture2D" path="res://skills/scanner/drone/mesh/LRR5_glow.png" id="6_glow"]
+
+[resource]
+resource_name = "ReconDroneLRR5Grey"
+albedo_texture = ExtResource("1_alb")
+metallic = 1.0
+metallic_texture = ExtResource("3_met")
+roughness_texture = ExtResource("4_rgh")
+normal_enabled = true
+normal_texture = ExtResource("2_nrm")
+ao_enabled = true
+ao_texture = ExtResource("5_ao")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 2.0
+emission_operator = 1
+emission_texture = ExtResource("6_glow")
