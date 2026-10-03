@@ -1,0 +1,147 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://skills/scanner/debris/debris_pile.gd" id="1_skin"]
+[ext_resource type="PackedScene" uid="uid://vcjp4xyvn5c0" path="res://skills/scanner/debris/meshes/GSX-Part_A_grey.FBX" id="2_a"]
+[ext_resource type="PackedScene" uid="uid://c4t6id100shui" path="res://skills/scanner/debris/meshes/GSX-Part_B_grey.FBX" id="3_b"]
+[ext_resource type="PackedScene" uid="uid://653x4a453ci" path="res://skills/scanner/debris/meshes/GSX-Part_P_grey.FBX" id="4_p"]
+[ext_resource type="PackedScene" uid="uid://cqo7f3olj1434" path="res://skills/scanner/debris/meshes/GSX-Part_O.FBX" id="5_o"]
+[ext_resource type="PackedScene" uid="uid://cv6smybwhj478" path="res://skills/scanner/debris/meshes/GSX-Part_G_grey.FBX" id="6_g"]
+[ext_resource type="PackedScene" uid="uid://blwan7k0br30b" path="res://skills/scanner/debris/meshes/GSX-Part_F_grey.FBX" id="7_f"]
+[ext_resource type="PackedScene" uid="uid://dcqotkoqof61d" path="res://skills/scanner/debris/meshes/GSX-Part_D_grey.FBX" id="8_d"]
+[ext_resource type="PackedScene" uid="uid://v3rntmhbuqh" path="res://skills/scanner/debris/meshes/GSX-Part_I_grey.FBX" id="9_i"]
+[ext_resource type="PackedScene" uid="uid://bymtamfvh6rwk" path="res://skills/scanner/debris/meshes/GSX-Part_N.FBX" id="10_n"]
+[ext_resource type="PackedScene" uid="uid://cb08tmwjap8v5" path="res://skills/scanner/debris/meshes/GSX-Part_C.FBX" id="11_c"]
+[ext_resource type="PackedScene" uid="uid://bui61qggtg382" path="res://skills/scanner/debris/meshes/GSX-Part_M.FBX" id="12_m"]
+[ext_resource type="PackedScene" uid="uid://546olumrfn1l" path="res://skills/scanner/debris/meshes/GSX-Part_K_grey.FBX" id="13_k"]
+[ext_resource type="PackedScene" uid="uid://24ba0amjbryi" path="res://skills/scanner/debris/meshes/GSX-Part_H.FBX" id="14_h"]
+[ext_resource type="PackedScene" uid="uid://7hbuvo07jdbo" path="res://skills/scanner/debris/meshes/GSX-Part_J.FBX" id="15_j"]
+[ext_resource type="PackedScene" uid="uid://dshpvu0c7agnh" path="res://skills/scanner/debris/meshes/GSX-Part_E_grey.FBX" id="16_e"]
+[ext_resource type="PackedScene" uid="uid://cts56oehktd2w" path="res://skills/scanner/debris/meshes/GSX-Part_L.FBX" id="17_l"]
+
+; КУПА УЛАМКІВ, ВАРІАНТ «ПЛИТА». Той самий щільний набій, що й у «ЯДРА», тільки
+; розчавлений по висоті: 24 на 15 на 22 одиниці, тридцять вісім шматків. Корпус
+; розійшовся в одній площині.
+;
+; Силует і є тут усією справою. «ЯДРО» кругле, «РОЗСИП» довгий, а ця купа з
+; кабіни читається смугою, і три варіанти не плутаються між собою навіть
+; здалеку. Пласкою вона тримається не розкидом центрів, а поворотами: довгі осі
+; шматків притиснуті до площини. Затиснути самі лише центри мало, деталь на
+; одинадцять одиниць, поставлена сторч, підіймає габарит удвічі.
+;
+; Зібрано tools/build_debris_piles.py (зерно 5508).
+[node name="DebrisSlab" type="Node3D"]
+script = ExtResource("1_skin")
+
+[node name="Orange_A01" parent="." instance=ExtResource("2_a")]
+transform = Transform3D(0.09912, -0.02948, 0.05193, 0.01122, 0.10804, 0.03992, -0.05866, -0.02916, 0.09540, -0.95455, -0.12162, -0.62316)
+
+[node name="Orange_B01" parent="." instance=ExtResource("3_b")]
+transform = Transform3D(0.02244, 0.04357, 0.08359, -0.02150, 0.08603, -0.03907, -0.09178, -0.00950, 0.02959, 2.22491, -0.48459, 0.78207)
+
+[node name="Orange_P01" parent="." instance=ExtResource("4_p")]
+transform = Transform3D(0.07643, -0.00564, 0.04050, 0.01057, 0.08566, -0.00801, -0.03950, 0.01200, 0.07622, -0.23200, -0.30428, 1.95522)
+
+[node name="Grey_O01" parent="." instance=ExtResource("5_o")]
+transform = Transform3D(-0.02336, -0.05296, -0.06921, -0.02277, 0.07288, -0.04808, 0.08412, 0.00502, -0.03224, -2.28484, -0.18736, 1.91501)
+
+[node name="Orange_G01" parent="." instance=ExtResource("6_g")]
+transform = Transform3D(0.08356, -0.03109, 0.02536, 0.01956, 0.08273, 0.03695, -0.03503, -0.02796, 0.08114, 0.94543, 0.47593, 2.19830)
+
+[node name="Orange_F01" parent="." instance=ExtResource("7_f")]
+transform = Transform3D(0.03563, 0.01255, -0.09841, 0.01033, 0.10353, 0.01694, 0.09867, -0.01537, 0.03377, 2.50690, -0.42168, -3.59737)
+
+[node name="Orange_D01" parent="." instance=ExtResource("8_d")]
+transform = Transform3D(-0.03085, -0.00014, -0.05628, -0.00383, 0.06404, 0.00194, 0.05615, 0.00429, -0.03078, 5.30229, -0.20773, 2.53750)
+
+[node name="Orange_I01" parent="." instance=ExtResource("9_i")]
+transform = Transform3D(0.08919, 0.01427, 0.04155, -0.00787, 0.09771, -0.01666, -0.04323, 0.01166, 0.08878, 4.31478, -0.19667, 0.28299)
+
+[node name="Orange_D02" parent="." instance=ExtResource("8_d")]
+transform = Transform3D(-0.05718, -0.03045, 0.03651, 0.00565, 0.05235, 0.05251, -0.04720, 0.04315, -0.03794, 0.30113, 0.28998, 5.88985)
+
+[node name="Orange_N01" parent="." instance=ExtResource("10_n")]
+transform = Transform3D(0.01926, -0.02861, 0.09523, 0.03879, 0.09148, 0.01964, -0.09156, 0.03273, 0.02836, 0.72002, -0.09959, -5.18520)
+
+[node name="Orange_C01" parent="." instance=ExtResource("11_c")]
+transform = Transform3D(-0.02074, 0.00110, 0.05658, 0.03768, 0.04523, 0.01293, -0.04222, 0.03983, -0.01625, 5.18283, 0.34844, -1.95409)
+
+[node name="Orange_N02" parent="." instance=ExtResource("10_n")]
+transform = Transform3D(0.02980, -0.04180, -0.10127, -0.01412, 0.10261, -0.04651, 0.10864, 0.02480, 0.02173, 3.93165, -0.23016, -1.77607)
+
+[node name="Orange_M01" parent="." instance=ExtResource("12_m")]
+transform = Transform3D(0.04405, -0.01077, -0.05626, -0.01759, 0.06501, -0.02621, 0.05452, 0.02967, 0.03700, -0.88701, 0.59909, 3.03810)
+
+[node name="Orange_N03" parent="." instance=ExtResource("10_n")]
+transform = Transform3D(0.07951, 0.00216, -0.02672, 0.02068, 0.04828, 0.06543, 0.01706, -0.06859, 0.04522, 4.34524, -0.25317, -2.58434)
+
+[node name="Orange_C02" parent="." instance=ExtResource("11_c")]
+transform = Transform3D(0.03935, 0.03212, -0.07585, -0.02940, 0.08400, 0.02032, 0.07695, 0.01567, 0.04655, -0.27454, -0.13291, 4.61390)
+
+[node name="Orange_F02" parent="." instance=ExtResource("7_f")]
+transform = Transform3D(0.07949, 0.03120, 0.06163, -0.03656, 0.09872, -0.00282, -0.05861, -0.01926, 0.08535, -4.30029, 0.16817, 2.68429)
+
+[node name="Grey_K01" parent="." instance=ExtResource("13_k")]
+transform = Transform3D(0.03493, 0.04822, -0.04424, -0.04393, 0.05444, 0.02465, 0.04850, 0.01459, 0.05419, -4.72633, 0.70779, -3.12663)
+
+[node name="Orange_F03" parent="." instance=ExtResource("7_f")]
+transform = Transform3D(-0.05369, 0.02423, 0.02536, 0.03145, 0.05379, 0.01519, -0.01554, 0.02515, -0.05691, -2.31145, -0.17950, 5.19113)
+
+[node name="Orange_M02" parent="." instance=ExtResource("12_m")]
+transform = Transform3D(0.00507, 0.01701, -0.08131, -0.05358, 0.06292, 0.00982, 0.06348, 0.05175, 0.01478, 2.96840, -0.50700, -2.07801)
+
+[node name="Orange_I02" parent="." instance=ExtResource("9_i")]
+transform = Transform3D(-0.07090, 0.03388, 0.01157, 0.03269, 0.07173, -0.00972, -0.01460, -0.00392, -0.07797, -6.43120, 0.43416, 1.55348)
+
+[node name="Orange_C03" parent="." instance=ExtResource("11_c")]
+transform = Transform3D(0.00811, -0.00473, -0.08270, -0.00754, 0.08271, -0.00547, 0.08249, 0.00802, 0.00763, 2.20399, 0.07465, 5.67782)
+
+[node name="Orange_H01" parent="." instance=ExtResource("14_h")]
+transform = Transform3D(0.02100, -0.03820, 0.05356, 0.02013, 0.05726, 0.03294, -0.06263, 0.00560, 0.02855, -4.77460, -0.40743, -1.83079)
+
+[node name="Orange_N04" parent="." instance=ExtResource("10_n")]
+transform = Transform3D(-0.03612, -0.03513, -0.06095, -0.06684, 0.03850, 0.01742, 0.02193, 0.05947, -0.04728, -2.69876, -0.01597, -3.78021)
+
+[node name="Orange_J01" parent="." instance=ExtResource("15_j")]
+transform = Transform3D(0.05355, -0.00949, 0.00286, 0.00921, 0.05345, 0.00492, -0.00367, -0.00435, 0.05416, 3.55862, -0.54585, 4.51618)
+
+[node name="Orange_N05" parent="." instance=ExtResource("10_n")]
+transform = Transform3D(0.02313, 0.03503, 0.09736, 0.01893, 0.09664, -0.03927, -0.10172, 0.02595, 0.01483, -5.78411, 0.09049, -1.29157)
+
+[node name="Orange_F04" parent="." instance=ExtResource("7_f")]
+transform = Transform3D(0.08990, 0.01954, -0.04141, -0.02234, 0.09836, -0.00208, 0.03997, 0.01102, 0.09198, -0.80740, -0.20809, -5.32757)
+
+[node name="Orange_D03" parent="." instance=ExtResource("8_d")]
+transform = Transform3D(0.03653, -0.02876, 0.02797, 0.03470, 0.04163, -0.00251, -0.02013, 0.01958, 0.04643, -1.37814, 0.41129, 4.64256)
+
+[node name="Grey_E01" parent="." instance=ExtResource("16_e")]
+transform = Transform3D(0.07560, 0.02084, 0.02058, -0.01467, 0.07625, -0.02332, -0.02535, 0.01802, 0.07487, 3.79141, -0.47371, 2.17744)
+
+[node name="Orange_D04" parent="." instance=ExtResource("8_d")]
+transform = Transform3D(0.03095, -0.04996, -0.06569, 0.05801, 0.06308, -0.02064, 0.05871, -0.03599, 0.05503, 4.20165, 0.82494, -2.66580)
+
+[node name="Orange_I03" parent="." instance=ExtResource("9_i")]
+transform = Transform3D(0.08725, -0.01692, 0.04583, 0.01427, 0.09854, 0.00920, -0.04672, -0.00149, 0.08839, -5.70228, 0.75358, -0.07094)
+
+[node name="Orange_I04" parent="." instance=ExtResource("9_i")]
+transform = Transform3D(-0.03083, 0.00160, -0.04852, -0.00200, 0.05739, 0.00316, 0.04851, 0.00338, -0.03071, 2.77686, 0.34919, -0.87658)
+
+[node name="Grey_K02" parent="." instance=ExtResource("13_k")]
+transform = Transform3D(0.08519, 0.04278, 0.04114, -0.05332, 0.08678, 0.02017, -0.02607, -0.03767, 0.09317, 6.86132, -0.07994, 0.59555)
+
+[node name="Grey_N06" parent="." instance=ExtResource("10_n")]
+transform = Transform3D(-0.01807, -0.00552, -0.05371, -0.03234, 0.04646, 0.00611, 0.04324, 0.03245, -0.01788, -3.64977, 0.41716, -3.56152)
+
+[node name="Orange_I05" parent="." instance=ExtResource("9_i")]
+transform = Transform3D(0.01078, 0.00787, 0.05393, -0.00319, 0.05497, -0.00738, -0.05441, -0.00166, 0.01111, -3.44979, -1.14475, 2.32784)
+
+[node name="Grey_N07" parent="." instance=ExtResource("10_n")]
+transform = Transform3D(-0.09760, -0.02130, -0.00867, -0.01916, 0.09622, -0.02073, 0.01272, -0.01852, -0.09772, -4.98524, 0.59543, 1.03835)
+
+[node name="Orange_L01" parent="." instance=ExtResource("17_l")]
+transform = Transform3D(-0.00559, 0.02735, 0.10099, 0.02101, 0.09936, -0.02574, -0.10249, 0.01888, -0.01078, 3.14027, 0.19674, 3.13742)
+
+[node name="Orange_E02" parent="." instance=ExtResource("16_e")]
+transform = Transform3D(-0.03933, -0.03918, -0.08856, 0.01161, 0.09299, -0.04630, 0.09614, -0.02726, -0.03064, 2.81459, -0.08979, -5.73907)
+
+[node name="Orange_L02" parent="." instance=ExtResource("17_l")]
+transform = Transform3D(-0.07990, 0.01339, 0.04980, 0.02115, 0.09227, 0.00912, -0.04703, 0.01874, -0.08050, -2.30355, 0.45922, -4.31212)

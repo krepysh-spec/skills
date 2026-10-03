@@ -1,0 +1,17 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 23.10.2019 16:58:08
+
+newmtl Bomber_ZR5
+	Ns 29.999998
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.847059 0.847059 0.847059
+	Kd 0.847059 0.847059 0.847059
+	Ks 0.720000 0.720000 0.720000
+	Ke 0.000000 0.000000 0.000000
+	map_Kd ZR4_blue.jpg
+	map_Ke ZR4_glow.jpg
+	map_bump ZR4_normal.jpg

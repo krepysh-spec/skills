@@ -1,0 +1,89 @@
+[gd_scene format=3]
+
+; КОРАБЕЛЬ ZR4 із гри (content/entities/ships/zr4_fighter), без ігрової обв'язки:
+; лишився корпус з тим самим матеріалом і трьома соплами на jet.gdshader. Сліди
+; двигунів (engine_trail) і ship_visual.gd не перенесено: вони тягнуть за собою
+; польотну модель і мережу, а для стенду сканера корабель лише стоїть поруч.
+;
+; Масштаб корпусу той самий, що в грі (0.009637): ZR4 нормалізований до
+; ShipModels.TARGET_LENGTH = 3.82 юніта, тож поруч із купою він такого ж розміру,
+; як у секторі.
+
+[ext_resource type="ArrayMesh" path="res://skills/scanner/ship/mesh/SF_Fighter-ZR4.obj" id="1_mesh"]
+[ext_resource type="Material" path="res://skills/scanner/ship/mesh/zr4_material.tres" id="2_mat"]
+[ext_resource type="Shader" path="res://skills/scanner/ship/jet/jet.gdshader" id="3_jet"]
+[ext_resource type="Script" path="res://skills/scanner/ship/jet/jet_thrust.gd" id="4_thrust"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_jet"]
+noise_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_jet"]
+noise = SubResource("FastNoiseLite_jet")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jet"]
+render_priority = 0
+shader = ExtResource("3_jet")
+shader_parameter/color_core = Color(0.855, 1, 0.775, 1)
+shader_parameter/color_mid = Color(0.42, 1, 0.1, 1)
+shader_parameter/color_edge = Color(0.12, 0.4, 0, 0.9)
+shader_parameter/intensity = 5.0
+shader_parameter/fade_power = 1.0
+shader_parameter/uv_middle = 0.0
+shader_parameter/length_scale = 3.5
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_jet")
+shader_parameter/noise_scroll = Vector2(0, -0.9)
+shader_parameter/noise_scale = Vector2(0.8, 0.8)
+shader_parameter/noise_strength = 0.4
+shader_parameter/noise_contrast = 1.5
+shader_parameter/fresnel_power = 1.2
+shader_parameter/fresnel_boost = 1.0
+shader_parameter/core_boost = 2.5
+shader_parameter/core_falloff = 1.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jet"]
+top_radius = 0.4
+bottom_radius = 0.15
+height = 2.9355469
+rings = 0
+cap_top = false
+cap_bottom = false
+
+[node name="ZR4Ship" type="Node3D"]
+
+[node name="Hull" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.009637, 0, 0, 0, 0.009637, 0, 0, 0, -0.009637, 0, 0.18, 0)
+mesh = ExtResource("1_mesh")
+surface_material_override/0 = ExtResource("2_mat")
+
+[node name="Engines" type="Node3D" parent="."]
+
+[node name="E1" type="Marker3D" parent="Engines"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.19000441, 1.1)
+
+[node name="Jet" type="MeshInstance3D" parent="Engines/E1"]
+transform = Transform3D(1.1953231, 0, 0, 0, -2.9461372e-08, 0.3340064, 0, -0.6739975, -1.4599887e-08, -0.013292134, 0.015460402, 1.2108094)
+material_override = SubResource("ShaderMaterial_jet")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_jet")
+script = ExtResource("4_thrust")
+
+[node name="E2" type="Marker3D" parent="Engines"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7739251, 0.19000441, 1.1)
+
+[node name="Jet" type="MeshInstance3D" parent="Engines/E2"]
+transform = Transform3D(0.16366597, 0, 0, 0, -1.1726288e-08, 0.16366597, 0, -0.26826614, -7.154068e-09, 0.006632209, -0.008443385, 0.40060735)
+material_override = SubResource("ShaderMaterial_jet")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_jet")
+script = ExtResource("4_thrust")
+
+[node name="E3" type="Marker3D" parent="Engines"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.79606134, 0.19000441, 1.1)
+
+[node name="Jet" type="MeshInstance3D" parent="Engines/E3"]
+transform = Transform3D(0.16366597, 0, 0, 0, -1.1726288e-08, 0.16366597, 0, -0.26826614, -7.154068e-09, 0.03229946, 0.015460402, 0.40060735)
+material_override = SubResource("ShaderMaterial_jet")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_jet")
+script = ExtResource("4_thrust")
