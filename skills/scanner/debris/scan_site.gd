@@ -2,8 +2,9 @@ class_name ScanSite
 extends Node3D
 ## КУПА УЛАМКІВ, ЯКУ СКАНУЮТЬ. Ігрова частина props/wreck_site/wreck_site.gd
 ## гри, зведена до самого такту скану: смуга vfx/scan_pass повзе по уламках
-## знизу вгору SEARCH_S секунд під гудіння scan_loop, наприкінці спалах і іскри.
-## Довжина такту, кольори й розміри спалаху ті самі, що в грі.
+## знизу вгору SEARCH_S секунд під гудіння scan_loop. Довжина такту й кольори ті
+## самі, що в грі; кінець свій — імпульс по купі з іскрами (fx/scan_impulse.gd)
+## замість ігрової кулі-спалаху.
 ##
 ## ЩО ВИКИНУТО І ЧОМУ: мітка над купою, картка HUD, серверна закладка, повтор
 ## чужого скану й здобич. Усе це розмова з сервером і з HUD, а стенд показує
@@ -18,7 +19,6 @@ signal scan_finished
 @export var search_s := 3.0
 
 const SEARCH_COLOR := Color(0.35, 0.8, 1.0)
-const CORE_COLOR := Color(0.0, 0.831, 1.0)
 const SEARCH_SFX_PATH := "res://skills/scanner/audio/scan_loop.mp3"
 
 var _pile: Node3D
@@ -27,6 +27,8 @@ var _pass: ScanPass
 var _searching := false
 var _search_t := 0.0
 var _sfx: AudioStreamPlayer
+## Імпульс наприкінці скану (fx/scan_impulse.gd), поки хвиля йде по купі.
+var _impulse := ScanImpulse.new()
 
 
 func _ready() -> void:
@@ -71,7 +73,9 @@ func radius_xz() -> float:
 
 ## Почати скан. Повторний виклик, поки триває попередній, нічого не робить.
 func search() -> void:
-	if _searching or _pile == null:
+	# ...і поки по купі ще йде імпульс минулого скану: обидва ефекти живуть у
+	# material_overlay тих самих мешів.
+	if _searching or _pile == null or _impulse.running():
 		return
 	_searching = true
 	_start_sfx()
@@ -100,9 +104,12 @@ func _finish() -> void:
 	_pass = null
 	if _sfx != null:
 		_sfx.stop()
+	# Кінець скану — ІМПУЛЬС по самій купі з іскрами з її поверхні, а не
+	# куля-спалах, як у грі (game.spawn_flash): результат читається як те, що
+	# сталося з уламками, а не вибух поруч із ними.
 	var host := get_parent() if get_parent() != null else self
-	ScanFx.flash(host, global_position, CORE_COLOR, 6.5, 0.32)
-	ScanFx.sparks(host, global_position, CORE_COLOR, 16)
+	_impulse.tint = SEARCH_COLOR
+	_impulse.play(host, _pile, center(), _span.size.length() * 0.5)
 	scan_finished.emit()
 
 

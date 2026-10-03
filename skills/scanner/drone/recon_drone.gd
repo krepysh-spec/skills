@@ -33,9 +33,25 @@ signal survey_finished
 @export var model_yaw_deg := 180.0
 
 ## Віяло: півширина на цілі в частках радіуса купи і півтовщина в юнітах.
-const FAN_SPREAD := 0.45
+## Навмисно на всю купу: що видно, вирішує карта тіней (світло лише там, де
+## промінь влучає в метал), тож ширше за силует моделі віяло не буде.
+const FAN_SPREAD := 1.05
 const FAN_THICK := 0.35
+## У скільки разів віяло довше за відстань до осі купи. Край конуса має лежати
+## ЗА металом: тоді те, де віяло кінчається, вирішує сама модель (шейдер
+## обриває кожен промінь на першому уламку, а ті, що ні в що не влучають, не
+## малює взагалі), а не пряма риска конуса.
+const FAN_REACH := 1.5
 const BEAM_COLOR := Color(0.35, 0.8, 1.0)
+
+## КАРТА ТІНЕЙ ПРОМЕНЯ (див. шапку scan_beam.gdshader): камера в носі дрона,
+## що дивиться вздовж віяла. Віяло широке й тонке, тож і карта така сама:
+## 1024 променя впоперек, 128 рядків по товщині.
+const SHADOW_SIZE := Vector2i(1024, 128)
+const SHADOW_FAR := 250.0
+## Шар візуалізації квада, що пише карту: його бачить лише камера дрона.
+const SHADOW_LAYER := 20
+const BEAM_DEPTH_SHADER := "res://skills/scanner/drone/beam_depth.gdshader"
 
 enum State { DOCKED, LAUNCH, ORBIT, RETURN }
 
@@ -51,6 +67,9 @@ var _angle := 0.0
 var _beam_fade := 0.0
 var _beam_mat: ShaderMaterial
 var _prev := Vector3.ZERO
+var _shadow_vp: SubViewport
+var _shadow_cam: Camera3D
+var _main_cam_masked := false
 
 @onready var _model: Node3D = $Model
 @onready var _beam: MeshInstance3D = $Beam
@@ -67,6 +86,10 @@ func _ready() -> void:
 		_beam_mat = (_beam.material_override as ShaderMaterial).duplicate()
 		_beam_mat.set_shader_parameter("tint", BEAM_COLOR)
 		_beam.material_override = _beam_mat
+	_build_shadow()
+	if _beam_mat != null:
+		_beam_mat.set_shader_parameter("shadow_map", _shadow_vp.get_texture())
+		_beam_mat.set_shader_parameter("shadow_far", SHADOW_FAR)
 	_eye.light_energy = 0.0
 	if ship != null:
 		global_position = _dock_pos()
@@ -85,6 +108,47 @@ func _fit() -> void:
 	var s := size / longest
 	var b := Basis(Vector3.UP, deg_to_rad(model_yaw_deg)).scaled(Vector3.ONE * s)
 	_model.transform = Transform3D(b, -(b * box.get_center()))
+
+
+## Камера карти тіней у власному SubViewport. В'юпорт ділить світ із головним
+## (own_world_3d вимкнено), тож бачить ту саму купу, але має своє Environment:
+## без неба, тонмапу й глоу, щоб у колір дійшло саме число відстані.
+## Малює лише тоді, коли віяло горить (_tick_beam).
+func _build_shadow() -> void:
+	_shadow_vp = SubViewport.new()
+	_shadow_vp.name = "BeamShadow"
+	_shadow_vp.size = SHADOW_SIZE
+	_shadow_vp.use_hdr_2d = true
+	_shadow_vp.msaa_3d = Viewport.MSAA_DISABLED
+	_shadow_vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
+	_shadow_vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	var env := Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color.BLACK
+	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	env.glow_enabled = false
+	_shadow_cam = Camera3D.new()
+	_shadow_cam.keep_aspect = Camera3D.KEEP_WIDTH
+	# ближня площина за кінчиком носа: інакше перед камерою стояв би сам дрон
+	_shadow_cam.near = 1.0
+	_shadow_cam.far = SHADOW_FAR
+	_shadow_cam.environment = env
+	var quad := MeshInstance3D.new()
+	var qm := QuadMesh.new()
+	qm.size = Vector2(2.0, 2.0)
+	quad.mesh = qm
+	var mat := ShaderMaterial.new()
+	mat.shader = load(BEAM_DEPTH_SHADER)
+	quad.material_override = mat
+	quad.layers = 1 << (SHADOW_LAYER - 1)
+	quad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# квад розтягує на весь екран вершинний шейдер, тож його не можна відкидати
+	# за межами огляду
+	quad.extra_cull_margin = 16384.0
+	_shadow_cam.add_child(quad)
+	_shadow_vp.add_child(_shadow_cam)
+	add_child(_shadow_vp)
+	_shadow_cam.current = true
 
 
 func busy() -> bool:
@@ -113,6 +177,9 @@ func _go(s: State) -> void:
 
 
 func _process(delta: float) -> void:
+	# З ПЕРШОГО Ж КАДРУ, а не з першого променя: квад карти тіней є в сцені
+	# відразу, і поки головна камера його бачить, він заливає весь екран.
+	_mask_main_camera()
 	_clock += delta
 	_t += delta
 	var look := Vector3.ZERO           # куди повернути ніс, нуль — за рухом
@@ -195,14 +262,16 @@ static func _bezier(a: Vector3, c: Vector3, b: Vector3, t: float) -> Vector3:
 func _tick_beam(delta: float) -> void:
 	var on := _state == State.ORBIT and _site != null and _site.searching()
 	_beam_fade = move_toward(_beam_fade, 1.0 if on else 0.0, delta * 3.0)
-	_eye.light_energy = _beam_fade * 2.0
+	_eye.light_energy = _beam_fade * 5.0
 	_beam.visible = _beam_fade > 0.01 and _site != null
+	_shadow_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if _beam.visible \
+		else SubViewport.UPDATE_DISABLED
 	if not _beam.visible:
 		return
+	var from := global_position + global_basis * Vector3(0.0, 0.0, -size * 0.3)
 	if _beam_mat != null:
 		_beam_mat.set_shader_parameter("fade", _beam_fade)
-	var from := global_position + global_basis * Vector3(0.0, 0.0, -size * 0.3)
-	var to := _beam_target()
+	var to := from + (_beam_target() - from) * FAN_REACH
 	var d := from - to
 	var length := d.length()
 	if length < 0.01:
@@ -213,5 +282,27 @@ func _tick_beam(delta: float) -> void:
 		x = Vector3.RIGHT
 	x = x.normalized()
 	var z := x.cross(y).normalized()
-	var hw := _site.radius_xz() * FAN_SPREAD
+	var hw := _site.radius_xz() * FAN_SPREAD * FAN_REACH
 	_beam.global_transform = Transform3D(Basis(x * hw, y * length, z * FAN_THICK), (from + to) * 0.5)
+
+	# Камера тіней стоїть у вершині віяла й дивиться на його широкий край; кут
+	# огляду рівно накриває віяло (з запасом), рядків вистачає на його товщину.
+	_shadow_cam.global_transform = Transform3D(Basis.looking_at(-y, Vector3.UP), from)
+	var half := atan(hw / length) * 1.1
+	_shadow_cam.fov = rad_to_deg(half * 2.0)
+	if _beam_mat != null:
+		var tx := tan(half)
+		_beam_mat.set_shader_parameter("shadow_inv", _shadow_cam.global_transform.affine_inverse())
+		_beam_mat.set_shader_parameter("shadow_tan",
+			Vector2(tx, tx * float(SHADOW_SIZE.y) / float(SHADOW_SIZE.x)))
+
+
+## Головна камера не повинна бачити квад карти тіней: він розтягується на весь
+## екран будь-якої камери, що його побачить.
+func _mask_main_camera() -> void:
+	if _main_cam_masked:
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam != null:
+		cam.set_cull_mask_value(SHADOW_LAYER, false)
+		_main_cam_masked = true

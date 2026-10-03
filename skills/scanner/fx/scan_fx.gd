@@ -1,6 +1,6 @@
 class_name ScanFx
 extends RefCounted
-## СПАЛАХ І ІСКРИ НАПРИКІНЦІ СКАНУ. Копія game.spawn_flash / game.spawn_sparks із
+## СПАЛАХ І ІСКРИ. Копія game.spawn_flash / game.spawn_sparks із
 ## core/world/directors/fx_director.gd гри: у грі їх дає `game`, а тут `game`
 ## немає, тож ті самі дві функції живуть статично й вішають ефект на переданий
 ## вузол. Меші й матеріали так само кешуються на клас.
@@ -44,12 +44,42 @@ static func sparks(host: Node, pos: Vector3, color: Color, count := 6) -> void:
 		tw.finished.connect(mi.queue_free)
 
 
+## Одна іскра-штрих: витягнута вздовж польоту, вилітає з `pos` у бік `dir` на
+## `dist` юнітів за `life` секунд, стискається й тане. `delay` — скільки чекати
+## до вильоту (до того її не видно).
+static func spark_streak(host: Node, pos: Vector3, dir: Vector3, dist: float, life: float,
+		delay: float, color: Color) -> void:
+	var mi := MeshInstance3D.new()
+	mi.mesh = _mesh("streak")
+	mi.material_override = _mat("spark", color)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.visible = false
+	host.add_child(mi)
+	mi.global_position = pos
+	var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.98 else Vector3.RIGHT
+	mi.look_at(pos + dir, up)
+	var tw := mi.create_tween()
+	tw.tween_interval(delay)
+	tw.tween_callback(func() -> void: mi.visible = true)
+	tw.tween_property(mi, "global_position", pos + dir * dist, life) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(mi, "scale", Vector3(0.4, 0.4, 0.15), life) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(mi, "transparency", 1.0, life) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(mi.queue_free)
+
+
 static func _mesh(kind: String) -> Mesh:
 	var hit: Variant = _meshes.get(kind)
 	if hit != null:
 		return hit
 	var mesh: Mesh
-	if kind == "spark":
+	if kind == "streak":
+		var sb := BoxMesh.new()
+		sb.size = Vector3(0.05, 0.05, 0.7)
+		mesh = sb
+	elif kind == "spark":
 		var bm := BoxMesh.new()
 		bm.size = Vector3(0.07, 0.07, 0.45)
 		mesh = bm
