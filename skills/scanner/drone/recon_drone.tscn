@@ -38,4 +38,4 @@ mesh = SubResource("CylinderMesh_fan")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, -0.6)
 light_color = Color(0.35, 0.8, 1, 1)
 light_energy = 0.0
-omni_range = 5.0
+omni_range = 8.0
